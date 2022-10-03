@@ -40,7 +40,7 @@ This results in a tighter bound on the stability of GNNs as Theorem 8 shows. Not
 
 ## Graph Classification on TUDataset
 
-Pre-compute the pairwise distance (potentially parallel). This generates the pair-wise distance matrix in `PairDist/M_MUTAG_L4_w0.5.npy`.
+Step 1: Pre-compute the pairwise distance (potentially parallel). For instance, the following script compute the pairwise distances of MUTAG with `pairwise_dist.py` by separating it into 4 batches, where each batch is computed parallely. One can merge the batches with `merge.py`.
 ```
 python pairwise_dist.py --w 0.5 --L 4 --dataset MUTAG --idx 0
 python pairwise_dist.py --w 0.5 --L 4 --dataset MUTAG --idx 1
@@ -50,16 +50,20 @@ python pairwise_dist.py --w 0.5 --L 4 --dataset MUTAG --idx 3
 python merge.py --w 0.5 --L 4 --dataset MUTAG
 ```
 
-Train a SVM classifier based on the tree mover's distance:
+Step 2: Train a SVM classifier based on the pre-computed distances:
 ```
 python svc.py --w 0.5 --L 4 --dataset MUTAG
 ```
 
 ## Measuring the Stability of GNNs
-The script `stability.py` reproduce the stability experiments in Figure 5. In particular, it plots the correlation between a 3-layer GIN and the tree mover's distance with graphs sampled from MUTAG.
+The script `stability.py` reproduce the stability experiments in Figure 5. In particular, it plots the correlation between a (L+1)-layer GIN and the tree mover's distance with graphs sampled from MUTAG.
 ```
-python stability.py
+python stability.py --L 3
 ```
+
+<p align='left'>
+<img src='https://github.com/chingyaoc/TMD/blob/master/misc/fig_stable.png?raw=true' width='700'/>
+</p>
 
 
 ## Citation
