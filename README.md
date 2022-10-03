@@ -21,7 +21,7 @@ Understanding generalization and robustness of machine learning models fundament
 - POT
 
 
-## USAGE
+## Usage Examples
 The code for computing Tree Mover's Distance (TMD) lie in `tmd.py`. For instance, the following code compute the TMD between two graphs of MUTAG dataset.
 ```python
 from tmd import TMD
@@ -30,6 +30,12 @@ from torch_geometric.datasets import TUDataset
 dataset = TUDataset('data', name='MUTAG')
 d = TMD(dataset[0], dataset[1], w=1.0, L=4)
 ```
+
+One can also specify different weighting constants for each layer as follows:
+```python
+d = TMD(dataset[0], dataset[1], w=[0.33, 1, 3], L=4)
+```
+This results in a tighter bound on the stability of GNNs as Theorem 8 shows. Note that `len(w)` has to be the same as `L-1`.
 
 
 ## Graph Classification on TUDataset
