@@ -56,7 +56,10 @@ python svc.py --w 0.5 --L 4 --dataset MUTAG
 ```
 
 ## Measure Stability of GNNs
-
+The script `stability.py` reproduce the stability experiments in Figure 5. In particular, it plots the correlation between a 3-layer GIN and the tree mover's distance with graphs sampled from MUTAG.
+```
+python stability.py
+```
 
 
 ## Citation
