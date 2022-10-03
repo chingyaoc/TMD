@@ -1,4 +1,4 @@
-# Tree Mover's Distance
+# Tree Mover's Distance for Graphs
 
 <p align='center'>
 <img src='https://github.com/chingyaoc/TMD/blob/master/fig.png?raw=true' width='900'/>
