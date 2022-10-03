@@ -1,4 +1,5 @@
 import random
+import argparse
 import numpy as np
 import os.path as osp
 from tqdm import tqdm
@@ -13,8 +14,13 @@ from torch_geometric.nn import GINConv, global_add_pool
 
 from tmd import TMD
 
-random.seed(1)
-torch.manual_seed(1)
+parser = argparse.ArgumentParser(description='Tree Mover Distance')
+parser.add_argument('--L', default=4, type=int, help='Depth of computational tree')
+args = parser.parse_args()
+
+# The Pascal’s triangle
+ws = [[1], [1],  [0.5, 2], [1/3, 1, 3]]
+w = ws[args.L - 1]
 
 # TU Dataset
 dataset = TUDataset('data', name='MUTAG').shuffle()
@@ -28,31 +34,34 @@ class Net(torch.nn.Module):
     '''
     3-layer GIN Network
     '''
-    def __init__(self, in_channels, dim, out_channels):
+    def __init__(self, in_channels, dim, out_channels, L):
         super().__init__()
-        self.conv1 = GINConv(
+        conv1 = GINConv(
             Sequential(Linear(in_channels, dim), ReLU(),
                        Linear(dim, dim), ReLU()))
-        self.conv2 = GINConv(
+        conv2 = GINConv(
             Sequential(Linear(dim, dim), ReLU(),
                        Linear(dim, dim), ReLU()))
-        self.conv3 = GINConv(
+        conv3 = GINConv(
             Sequential(Linear(dim, dim), ReLU(),
                        Linear(dim, dim), ReLU()))
+        self.convs = [conv1, conv2, conv3]
         self.lin1 = Linear(dim, dim)
         self.lin2 = Linear(dim, 1)
+        self.L = L
 
-    def forward(self, x, edge_index, batch):
-        x = self.conv1(x, edge_index)
-        x = self.conv2(x, edge_index)
-        x = self.conv3(x, edge_index)
+    def forward(self, x, edge_index, batch):        
+        for l in range(int(self.L-1)):
+            x = self.convs[l](x, edge_index)
         x = global_add_pool(x, batch)
         x = self.lin1(x).relu()
         x = self.lin2(x)
         return x
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Net(dataset.num_features, 32, dataset.num_classes).to(device)
+model = Net(dataset.num_features, 32, dataset.num_classes, args.L).to(device)
+for l in range(int(args.L-1)):
+    model.convs[l] = model.convs[l].to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 criterion = BCEWithLogitsLoss()
 
@@ -103,7 +112,7 @@ for i in tqdm(range(1000)):
     output_b = model(g_b.x, g_b.edge_index, torch.zeros(len(g_b.x), dtype=torch.int64).cuda())
 
     # TMD
-    tmd = TMD(dataset[a], dataset[b], w=[1/3, 1, 3], L=4)
+    tmd = TMD(dataset[a], dataset[b], w=w, L=args.L)
 
     oo.append(float(torch.norm(output_a - output_b).cpu().detach().numpy()))
     tt.append(tmd)

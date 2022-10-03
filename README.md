@@ -1,7 +1,7 @@
 # Tree Mover's Distance for Graphs
 
 <p align='center'>
-<img src='https://github.com/chingyaoc/TMD/blob/master/fig.png?raw=true' width='900'/>
+<img src='https://github.com/chingyaoc/TMD/blob/master/misc/fig.png?raw=true' width='900'/>
 </p>
 
 
