@@ -42,10 +42,10 @@ This results in a tighter bound on the stability of GNNs as Theorem 8 shows. Not
 
 Step 1: Pre-compute the pairwise distance (potentially parallel). For instance, the following script compute the pairwise distances of MUTAG with `pairwise_dist.py` by separating it into 4 batches, where each batch is computed parallely. One can merge the batches with `merge.py`.
 ```
-python pairwise_dist.py --w 0.5 --L 4 --dataset MUTAG --idx 0
-python pairwise_dist.py --w 0.5 --L 4 --dataset MUTAG --idx 1
-python pairwise_dist.py --w 0.5 --L 4 --dataset MUTAG --idx 2
-python pairwise_dist.py --w 0.5 --L 4 --dataset MUTAG --idx 3
+python pairwise_dist.py --w 0.5 --L 4 --dataset MUTAG --n_per_idx 50 --idx 0
+python pairwise_dist.py --w 0.5 --L 4 --dataset MUTAG --n_per_idx 50 --idx 1
+python pairwise_dist.py --w 0.5 --L 4 --dataset MUTAG --n_per_idx 50 --idx 2
+python pairwise_dist.py --w 0.5 --L 4 --dataset MUTAG --n_per_idx 50 --idx 3
 
 python merge.py --w 0.5 --L 4 --dataset MUTAG
 ```
