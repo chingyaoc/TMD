@@ -105,12 +105,12 @@ def TMD(g1, g2, w, L=4):
                     wass = 0.
                     for jj in range(degree_j):
                         wass += M1[n1, adj2[j][jj]]
-                    M[i, j] = D[i, j] + w * wass
+                    M[i, j] = D[i, j] + w[l] * wass
                 elif degree_j == 0:
                     wass = 0.
                     for ii in range(degree_i):
                         wass += M1[adj1[i][ii], n2]
-                    M[i, j] = D[i, j] + w * wass
+                    M[i, j] = D[i, j] + w[l] * wass
                 # otherwise, calculate the tree distance
                 else:
                     max_degree = max(degree_i, degree_j)
